@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{datetime}
+\usepackage[margin=1in]{geometry}
+
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    tabsize=4,
+    showstringspaces=false
+}
+
+\title{HW5: SQL Part 1 - Queries}
+\author{Abdullah Junejo}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Creating Table for EmployeeAttrition1.csv}
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE EmployeeAttrition1 (
+    Employee_Number INT, Age INT, Business_Travel varchar(255), Daily_Rate INT,
+    Department varchar(255), Distance_from_Home INT, Education INT,
+    Education_Field varchar(255), Environment_Satisfaction INT, 
+    Gender varchar(255), Hourly_Rate INT, Job_Involvement INT, 
+    Job_Level INT, Job_Role varchar(255), Job_Satisfaction INT,
+    Marital_Status varchar(255), Monthly_Income INT, Monthly_Rate INT,
+    Num_Companies_Worked INT, Percent_Salary_Hike INT, 
+    Performance_Rating INT, Relationship_Satisfaction INT,
+    Standard_Hours INT, Stock_Option_Level INT, Total_Working_Years INT, 
+    Training_Times_Last_Year INT, Work_Life_Balance INT,
+    Years_At_Company INT, Years_In_CurrentRole INT, 
+    Years_Since_Last_Promotion INT, Years_With_Curr_Manager INT
+);
+\end{lstlisting}
+
+\section*{Creating Table for EmployeeAttrition2.csv}
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE EmployeeAttritionTable2 (
+    Employee_Number INT, Over_18 varchar(64), Over_Time varchar(64),
+    Attrition varchar(64)
+);
+\end{lstlisting}
+
+\section*{Queries}
+
+\subsection*{Q1}
+\begin{lstlisting}[language=SQL]
+SELECT count(Employee_Number) as Total_Records 
+FROM EmployeeAttrition1;
+\end{lstlisting}
+
+\subsection*{Q2}
+\begin{lstlisting}[language=SQL]
+SELECT Job_Role as JobRole, count(Job_Role) as Count_Job_Role 
+FROM EmployeeAttrition1 
+GROUP BY Job_Role 
+ORDER BY Count_Job_Role DESC;
+\end{lstlisting}
+
+\subsection*{Q3}
+\begin{lstlisting}[language=SQL]
+SELECT Job_Role as JobRolee, 
+       avg(Monthly_Income) as Average_Monthly_Income, 
+       avg(Percent_Salary_Hike) as Salary_Hike_Increase 
+FROM EmployeeAttrition1 
+GROUP BY Job_Role 
+ORDER BY JobRolee;
+\end{lstlisting}
+
+\subsection*{Q4}
+\begin{lstlisting}[language=SQL]
+SELECT avg(Job_Satisfaction) as Avg_Job_Satisfaction, 
+       Gender, Marital_Status as Current_Gender_Marital_Status 
+FROM EmployeeAttrition1 
+GROUP BY Gender, Marital_Status;
+\end{lstlisting}
+
+\subsection*{Q5}
+\begin{lstlisting}[language=SQL]
+SELECT Job_Role as Role, min(Age) as Min_Age, 
+       max(Age) as Max_Age, min(Hourly_Rate) as Min_Hourly_Rate, 
+       max(Hourly_Rate) as Max_Hourly_Rate 
+FROM EmployeeAttrition1 
+GROUP BY Job_Role;
+\end{lstlisting}
+
+\subsection*{Q6}
+\begin{lstlisting}[language=SQL]
+SELECT Emp1.Employee_Number as Emp_Number, Emp1.Age, 
+       Emp1.Gender, Emp1.Job_Role as Role, 
+       Emp2.Over_Time as OverTimePeriod, Emp2.Attrition 
+FROM EmployeeAttrition1 Emp1 
+JOIN EmployeeAttritionTable2 Emp2 
+ON Emp1.Employee_Number = Emp2.Employee_Number 
+LIMIT 20;
+\end{lstlisting}
+
+\end{document}

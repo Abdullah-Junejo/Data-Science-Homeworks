@@ -1,0 +1,840 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{color}
+
+% Define the code style
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black}
+}
+
+\begin{document}
+
+\title{Homework Assignment 6: NoSQL}
+\author{Abdullah Junejo (07154)}
+\date{\today}
+\maketitle
+
+\section{Queries and Interpretations}
+
+\subsection{Count of Total Number of Records in the Collection}
+\begin{lstlisting}
+db.laureate.countDocuments()
+\end{lstlisting}
+This query returns the total number of records in the `laureate` collection.
+\begin{lstlisting}
+955
+\end{lstlisting}
+This gave us an idea of number of laureates and more specifically the size of dataset.
+
+\subsection{Count of Records for Each diedCountryCode in Descending order of count}
+\begin{lstlisting}
+db.laureate.aggregate([
+    {
+        $group: {
+            _id: "$diedCountryCode",
+            count: { $sum: 1 }
+        }
+    },
+    {
+        $sort: {
+            count: -1
+        }
+    }
+])
+\end{lstlisting}
+This query groups the records by `diedCountryCode` and then counts the number of occurrences for each. The results are sorted in descending order based on the count.
+\begin{lstlisting}
+    {
+        "_id" : null,
+        "count" : 335.0
+    }
+    {
+        "_id" : "US",
+        "count" : 223.0
+    }
+    {
+        "_id" : "GB",
+        "count" : 83.0
+    }
+    {
+        "_id" : "DE",
+        "count" : 59.0
+    }
+    {
+        "_id" : "FR",
+        "count" : 51.0
+    }
+    {
+        "_id" : "SE",
+        "count" : 29.0
+    }
+    {
+        "_id" : "CH",
+        "count" : 27.0
+    }
+    {
+        "_id" : "RU",
+        "count" : 15.0
+    }
+    {
+        "_id" : "IT",
+        "count" : 14.0
+    }
+    {
+        "_id" : "NL",
+        "count" : 10.0
+    }
+    {
+        "_id" : "ES",
+        "count" : 10.0
+    }
+    {
+        "_id" : "DK",
+        "count" : 10.0
+    }
+    {
+        "_id" : "NO",
+        "count" : 8.0
+    }
+    {
+        "_id" : "JP",
+        "count" : 8.0
+    }
+    {
+        "_id" : "BE",
+        "count" : 7.0
+    }
+    {
+        "_id" : "AT",
+        "count" : 6.0
+    }
+    {
+        "_id" : "CA",
+        "count" : 6.0
+    }
+    {
+        "_id" : "PL",
+        "count" : 5.0
+    }
+    {
+        "_id" : "MX",
+        "count" : 4.0
+    }
+    {
+        "_id" : "IL",
+        "count" : 4.0
+    }
+    {
+        "_id" : "AR",
+        "count" : 4.0
+    }
+    {
+        "_id" : "ZA",
+        "count" : 3.0
+    }
+    {
+        "_id" : "IN",
+        "count" : 3.0
+    }
+    {
+        "_id" : "IE",
+        "count" : 3.0
+    }
+    {
+        "_id" : "CZ",
+        "count" : 2.0
+    }
+    {
+        "_id" : "GR",
+        "count" : 2.0
+    }
+    {
+        "_id" : "FI",
+        "count" : 2.0
+    }
+    {
+        "_id" : "EG",
+        "count" : 2.0
+    }
+    {
+        "_id" : "AU",
+        "count" : 2.0
+    }
+    {
+        "_id" : "JM",
+        "count" : 1.0
+    }
+    {
+        "_id" : "ZM",
+        "count" : 1.0
+    }
+    {
+        "_id" : "CL",
+        "count" : 1.0
+    }
+    {
+        "_id" : "RS",
+        "count" : 1.0
+    }
+    {
+        "_id" : "BB",
+        "count" : 1.0
+    }
+    {
+        "_id" : "HU",
+        "count" : 1.0
+    }
+    {
+        "_id" : "GA",
+        "count" : 1.0
+    }
+    {
+        "_id" : "KE",
+        "count" : 1.0
+    }
+    {
+        "_id" : "IS",
+        "count" : 1.0
+    }
+    {
+        "_id" : "PH",
+        "count" : 1.0
+    }
+    {
+        "_id" : "SG",
+        "count" : 1.0
+    }
+    {
+        "_id" : "CN",
+        "count" : 1.0
+    }
+    {
+        "_id" : "TN",
+        "count" : 1.0
+    }
+    {
+        "_id" : "PT",
+        "count" : 1.0
+    }
+    {
+        "_id" : "VN",
+        "count" : 1.0
+    }
+    {
+        "_id" : "PR",
+        "count" : 1.0
+    }
+    {
+        "_id" : "RO",
+        "count" : 1.0
+    }
+    {
+        "_id" : "LC",
+        "count" : 1.0
+    }
+\end{lstlisting}
+A significant number of laureates (335) have null death city. This shows that our dataset is not perfect and has empty values which ideally should not exist. However, this is to be expected from dataset related to older times. US has the highest num of deceased laureates. This signifies its academic prowess.
+
+\subsection{Count of records for each prizes.category in descending order of count.}
+\begin{lstlisting}
+db.laureate.aggregate([
+    {
+        $unwind: "$prizes"
+    },
+    {
+        $group: {
+            _id: "$prizes.category",
+            count: { $sum: 1 }
+        }
+    },
+    {
+        $sort: {
+            count: -1
+        }
+    }
+])
+\end{lstlisting}
+The query deconstructs the `prizes` array for each record, groups by the `category` field within the `prizes` subdocument, and sorts the results in descending order based on the count.
+\begin{lstlisting}
+    {
+        "_id" : "medicine",
+        "count" : 222.0
+    }
+    {
+        "_id" : "physics",
+        "count" : 216.0
+    }
+    {
+        "_id" : "chemistry",
+        "count" : 186.0
+    }
+    {
+        "_id" : "peace",
+        "count" : 135.0
+    }
+    {
+        "_id" : "literature",
+        "count" : 117.0
+    }
+    {
+        "_id" : "economics",
+        "count" : 86.0
+    }
+\end{lstlisting}
+Laureates associated with medicine are highest. This could be due to the fact of post-war requirement and desire to advance medicine and medical facilities. Breakthroughs in this category was important for countries to get back on their feet.
+
+\subsection{Count of records for each gender, diedCountryCode, prize.category when prize.category is “physics”. Order the output by diedCountryCode.}
+\begin{lstlisting}
+db.laureate.aggregate([
+    {
+        $unwind: "$prizes"
+    },
+    {
+        $match: {
+            "prizes.category": "physics"
+        }
+    },
+    {
+        $group: {
+            _id: {
+                gender: "$gender",
+                diedCountryCode: "$diedCountryCode",
+                category: "$prizes.category"
+            },
+            count: { $sum: 1 }
+        }
+    },
+    {
+        $sort: {
+            "_id.diedCountryCode": 1
+        }
+    }
+])
+\end{lstlisting}
+This query filters laureates with prizes in the "physics" category, then provides a count of records for each combination of `gender`, `diedCountryCode`, and `prizes.category`. The results are ordered by `diedCountryCode`.
+\begin{lstlisting}
+    {
+        "_id" : {
+            "gender" : "female",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 76.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "AT",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "CA",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "CH",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 5.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "DE",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 15.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "DK",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "FR",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 8.0
+    }
+    {
+        "_id" : {
+            "gender" : "female",
+            "diedCountryCode" : "FR",
+            "PrizeCategory" : "chemistry"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "gender" : "female",
+            "diedCountryCode" : "FR",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "GB",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 18.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "IN",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "IT",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "JP",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "NL",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 6.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "RU",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 8.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "SE",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "gender" : "male",
+            "diedCountryCode" : "US",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 60.0
+    }
+    {
+        "_id" : {
+            "gender" : "female",
+            "diedCountryCode" : "US",
+            "PrizeCategory" : "physics"
+        },
+        "count" : 1.0
+    }
+\end{lstlisting}
+
+A significant gender disparity can be seen and could reflect certain gender biases in history. US once again leads the count followed by germany this time surprisingly. Both countries' dedication towards achievement can be thought of as a post world-war effect.
+
+\subsection{Come up with your own query to show any interesting insight. Use atleast two fields for match and two fields for group.}
+\begin{lstlisting}
+db.laureate.aggregate([
+    {
+        $unwind: "$prizes"
+    },
+    {
+        $match: {
+            "prizes.category": "physics"
+        }
+    },
+    {
+        $group: {
+            _id: {
+                bornCountry: "$bornCountryCode",
+                diedCountry: "$diedCountryCode"
+            },
+            count: { $sum: 1 }
+        }
+    },
+    {
+        $sort: {
+            count: -1
+        }
+    }
+])
+\end{lstlisting}
+This query provides a list of combinations of birth countries and death countries for Nobel Prize winners in Physics. It shows patterns of movement among laureates and can give insights into global academic and research migration trends.
+\begin{lstlisting}
+    {
+        "_id" : {
+            "bornCountry" : "US",
+            "diedCountry" : "US"
+        },
+        "count" : 40.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "US"
+        },
+        "count" : 30.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "GB",
+            "diedCountry" : "GB"
+        },
+        "count" : 14.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "DE",
+            "diedCountry" : "DE"
+        },
+        "count" : 11.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "DE"
+        },
+        "count" : 10.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "JP"
+        },
+        "count" : 7.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "GB"
+        },
+        "count" : 7.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "FR",
+            "diedCountry" : "FR"
+        },
+        "count" : 6.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "NL",
+            "diedCountry" : "NL"
+        },
+        "count" : 6.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "RU",
+            "diedCountry" : "RU"
+        },
+        "count" : 5.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "DE",
+            "diedCountry" : "US"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "CN"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "RU"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "PL",
+            "diedCountry" : "US"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "SE",
+            "diedCountry" : "SE"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "JP",
+            "diedCountry" : "JP"
+        },
+        "count" : 4.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "IT",
+            "diedCountry" : "US"
+        },
+        "count" : 3.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "CA"
+        },
+        "count" : 3.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "CH"
+        },
+        "count" : 3.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "DK",
+            "diedCountry" : "DK"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "FR",
+            "diedCountry" : "US"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "CH",
+            "diedCountry" : "CH"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "CA",
+            "diedCountry" : "CA"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "GB",
+            "diedCountry" : "US"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "PL",
+            "diedCountry" : "FR"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "FR"
+        },
+        "count" : 2.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "RU",
+            "diedCountry" : "DE"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "SK",
+            "diedCountry" : "DE"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "AT",
+            "diedCountry" : "US"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "AZ",
+            "diedCountry" : "RU"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "AU",
+            "diedCountry" : "RU"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "LU"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "PL",
+            "diedCountry" : "DE"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "IE",
+            "diedCountry" : "GB"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "CH",
+            "diedCountry" : "FR"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "HU",
+            "diedCountry" : "US"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "MA"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "NL"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "IT",
+            "diedCountry" : "IT"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "NL",
+            "diedCountry" : "CH"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "PK",
+            "diedCountry" : "GB"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "BE"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "CA",
+            "diedCountry" : "US"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "IN",
+            "diedCountry" : "IN"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "DZ"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "IT"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "AT",
+            "diedCountry" : "AT"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "GB",
+            "diedCountry" : "IT"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "PL"
+        },
+        "count" : 1.0
+    }
+    {
+        "_id" : {
+            "bornCountry" : "AU",
+            "diedCountry" : "GB"
+        },
+        "count" : 1.0
+    }
+\end{lstlisting}
+I would say most of the laureates were born and died in the same country. This shows that countries retained them and their academic efforts through various means. Secondly, migration and death in foreign country was US in most cases which again proves the sheer academic breakthrough it has been making.
+
+
+\end{document}
